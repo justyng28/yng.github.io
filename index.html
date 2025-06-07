@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title></title>
+<style>
+  body, html {
+    margin: 0; padding: 0; overflow: hidden; height: 100vh;
+    background: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    perspective: 1500px;
+  }
+  #world {
+    width: 100%; height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    cursor: grab;
+    user-select: none;
+  }
+  #world:active {
+    cursor: grabbing;
+  }
+  .text {
+    position: absolute;
+    color: #ff69b4;
+    font-weight: 600;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+    text-shadow:
+      0 0 5px #ff69b4,
+      0 0 10px #ff1493,
+      0 0 20px #ff1493,
+      0 0 30px #c71585;
+    will-change: transform, opacity;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.4;
+    user-select: none;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+  .heart {
+    position: absolute;
+    width: 40px; height: 36px;
+    background: linear-gradient(45deg, #ff0066, #ff3399);
+    clip-path: polygon(
+      50% 0%, 
+      85% 25%, 
+      85% 62%, 
+      50% 100%, 
+      15% 62%, 
+      15% 25%
+    );
+    filter: drop-shadow(0 0 6px #ff3399);
+    user-select: none;
+    pointer-events: none;
+    will-change: transform, opacity;
+  }
+</style>
+</head>
+<body>
+<div id="world"></div>
+
+<script>
+  const world = document.getElementById('world');
+  const words = [
+    "Anh yêu em", "Em là cả thế giới của anh", "Trái tim anh chỉ thuộc về em",
+    "Anh muốn bên em mãi mãi", "Em là điều kỳ diệu trong đời anh",
+    "Yêu em là niềm hạnh phúc lớn nhất", "Anh nguyện che chở cho em",
+    "Cứ bên anh nhé, em yêu", "Mỗi ngày bên em là một ngày tuyệt vời",
+    "Em là ánh sáng trong đêm tối của anh", "Anh nhớ em nhiều lắm",
+    "Tình yêu anh dành cho em không bao giờ phai nhạt",
+    "Anh muốn nắm tay em suốt đời", "Em là thiên thần của anh",
+    "Mỗi lần nhìn em, tim anh lại loạn nhịp", "Em làm anh hạnh phúc hơn bao giờ hết",
+    "Anh sẽ luôn là bờ vai vững chắc cho em", "Anh không thể sống thiếu em",
+    "Em là giấc mơ trở thành hiện thực", "Anh muốn cùng em đi hết cuộc đời này",
+    "Tình yêu của anh dành cho em sâu như biển cả",
+    "Anh muốn ôm em thật chặt", "Em là tất cả những gì anh cần",
+    "Mỗi phút bên em đều quý giá vô cùng",
+    "Anh sẽ mãi yêu em, không thay đổi",
+    "Em làm anh tin vào định mệnh", "Anh nguyện làm tất cả vì em",
+    "Chỉ cần em hạnh phúc, anh sẽ mãn nguyện",
+    "Anh muốn cùng em xây tổ ấm nhỏ",
+    "Em là người anh thương nhất trên đời", "Tình yêu này dành riêng cho em",
+    "Anh yêu cách em cười", "Em làm anh quên hết ưu phiền",
+    "Anh muốn mỗi sáng thức dậy có em bên cạnh",
+    "Tình cảm của anh dành cho em không lời nào diễn tả được",
+    "Anh luôn dõi theo từng bước chân em",
+    "Em là người anh muốn bảo vệ suốt đời",
+    "Anh nguyện là chốn bình yên cho em",
+    "Mọi điều đẹp nhất đều gắn liền với em",
+    "Anh yêu từng khoảnh khắc bên em",
+    "Em là nguồn cảm hứng bất tận của anh",
+    "Anh muốn cùng em đi qua bao thăng trầm",
+    "Tình yêu anh dành cho em mãi vững bền",
+    "Anh muốn là người duy nhất làm em cười",
+    "Em làm anh thấy cuộc đời này thật đẹp",
+    "Anh hạnh phúc vì có em trong đời",
+    "Mỗi ngày anh đều yêu em nhiều hơn",
+    "Anh nguyện giữ em trong tim suốt đời",
+    "Em là nửa kia hoàn hảo của anh",
+    "Anh muốn cùng em viết nên câu chuyện tình yêu",
+    "Tình yêu này sẽ không bao giờ kết thúc",
+    "Anh luôn biết ơn vì có em",
+    "Em làm cho thế giới anh tươi sáng hơn",
+    "Anh yêu em hơn cả chính mình",
+    "Anh muốn chăm sóc em mãi mãi",
+    "Em là người khiến anh trở thành phiên bản tốt nhất",
+    "Anh hứa sẽ luôn trung thành và chân thành",
+    "Tình yêu anh dành cho em là bất diệt",
+    "Anh muốn cùng em già đi theo năm tháng",
+    "Em là món quà quý giá nhất cuộc đời anh",
+    "Anh không bao giờ buông tay em",
+    "Tình cảm này dành cho em trọn đời",
+    "Anh yêu em từ cái nhìn đầu tiên",
+    "Em làm anh thấy cuộc sống có ý nghĩa",
+    "Anh muốn bên em mọi lúc mọi nơi",
+    "Em là người duy nhất trong tim anh",
+    "Anh nguyện làm người anh hùng của em",
+    "Tình yêu anh dành cho em không giới hạn",
+    "Anh sẽ mãi yêu em bằng cả trái tim",
+    "Em làm anh cảm thấy bình yên",
+    "Anh muốn cùng em chinh phục thế giới",
+    "Em là người anh luôn tin tưởng",
+    "Anh yêu em nhiều hơn ngôn từ có thể nói",
+    "Anh muốn ôm em khi em buồn",
+    "Tình yêu này là mãi mãi",
+    "Anh sẽ không bao giờ để em cô đơn",
+    "Em là lý do anh mỉm cười mỗi ngày",
+    "Anh nguyện làm mọi thứ cho em",
+    "Tình yêu anh dành cho em sâu sắc và chân thành",
+    "Anh muốn được là bầu trời che chở cho em",
+    "Em là tất cả những gì anh luôn tìm kiếm",
+    "Anh sẽ bên em dù mọi khó khăn",
+    "Em là người anh yêu thương nhất",
+    "Anh muốn cùng em tạo nên kỷ niệm đẹp",
+    "Tình yêu này không bao giờ phai nhạt",
+    "Anh yêu em từng giây từng phút",
+    "Em làm anh cảm thấy cuộc đời trọn vẹn",
+    "Anh nguyện bên em đến cuối con đường",
+    "Em là nguồn hạnh phúc vô tận",
+    "Anh muốn dành cả đời bên em",
+    "Tình yêu anh dành cho em là vô biên",
+    "Anh hứa sẽ làm em hạnh phúc",
+    "Em là niềm tin của anh",
+    "Anh yêu em nhiều hơn mọi thứ trên đời",
+    "Anh sẽ luôn bên em trong mọi khoảnh khắc",
+    "Em làm anh cảm thấy đặc biệt",
+    "Anh muốn yêu em hết lòng",
+    "Tình yêu này là dành cho em duy nhất",
+    "Anh yêu em, mãi mãi không đổi thay",
+    "Em là người khiến anh sống đẹp hơn",
+    "Anh nguyện vì em mà thay đổi",
+    "Anh muốn cùng em xây dựng tương lai",
+    "Tình yêu của anh dành cho em vĩnh cửu",
+    "Anh sẽ là người yêu em chân thành nhất",
+    "Em làm anh cảm thấy cuộc sống tuyệt vời",
+    "Anh muốn cùng em đi hết mọi nẻo đường"
+  ];
+
+  const COUNT_TEXT = 1200;   // sl chữ
+  const COUNT_STAR = 800;    // sl sao
+  const RADIUS = 2000; //g hạn
+
+  const texts = [];
+  const stars = [];
+  const hearts = [];
+
+  let rotateX = 15;
+  let rotateY = 0;
+
+  function randomRange(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function randomPointInSphere(radius) {
+    const u = Math.random();
+    const v = Math.random();
+    const theta = 2 * Math.PI * u;
+    const phi = Math.acos(2 * v - 1);
+    const r = Math.cbrt(Math.random()) * radius;
+    return {
+      x: r * Math.sin(phi) * Math.cos(theta),
+      y: r * Math.sin(phi) * Math.sin(theta),
+      z: r * Math.cos(phi)
+    };
+  }
+
+  for(let i=0; i<COUNT_TEXT; i++) {
+    const el = document.createElement('div');
+    el.className = 'text';
+    el.innerText = words[Math.floor(Math.random()*words.length)];
+    el.style.fontSize = (randomRange(14, 26)) + "px";
+    world.appendChild(el);
+
+    const pos = randomPointInSphere(RADIUS);
+    const speed = randomRange(0.2, 1);
+
+texts.push({
+  el, x: pos.x, y: pos.y, z: pos.z, speed,
+  fontSize: parseFloat(el.style.fontSize),
+  rotateAngle: Math.random() * 360,
+  rotateSpeed: randomRange(0.1, 0.4)
+});
+  }
+
+  for(let i=0; i<COUNT_STAR; i++) {
+    const el = document.createElement('div');
+    el.className = 'star';
+    const size = randomRange(3, 9);
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    world.appendChild(el);
+
+    const pos = randomPointInSphere(RADIUS);
+
+    stars.push({
+      el, x: pos.x, y: pos.y, z: pos.z, size,
+      rotateAngle: Math.random()*360,
+      rotateSpeed: randomRange(0.1, 0.3),
+    });
+  }
+
+
+  let isDragging = false;
+  let lastX = 0, lastY = 0;
+  document.addEventListener('mousedown', e => {
+    if(e.button===0){
+      isDragging = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
+    }
+  });
+  document.addEventListener('mouseup', e => {
+    if(e.button===0) isDragging = false;
+  });
+  document.addEventListener('mousemove', e => {
+    if(isDragging){
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      rotateY += dx * 0.3;
+      rotateX -= dy * 0.3;
+      rotateX = Math.min(Math.max(rotateX, -90), 90);
+    }
+  });
+
+  function toRad(deg){ return deg * Math.PI / 180; }
+
+  function animate(){
+    const radX = toRad(rotateX);
+    const radY = toRad(rotateY);
+    const cosX = Math.cos(radX);
+    const sinX = Math.sin(radX);
+    const cosY = Math.cos(radY);
+    const sinY = Math.sin(radY);
+
+    const perspective = 1500;
+
+   for(const t of texts){
+  t.y += t.speed;
+
+  if(t.y > RADIUS) {
+    t.y = -RADIUS;
+    t.el.innerText = words[Math.floor(Math.random()*words.length)];
+    const fs = randomRange(14, 26);
+    t.fontSize = fs;
+    t.el.style.fontSize = fs + 'px';
+  }
+
+  let x = t.x, y = t.y, z = t.z;
+
+  let xr = x * cosY - z * sinY;
+  let zr = x * sinY + z * cosY;
+  let yr = y * cosX - zr * sinX;
+  zr = y * sinX + zr * cosX;
+  const scale = perspective / (perspective + zr);
+  const screenX = window.innerWidth/2 + xr * scale;
+  const screenY = window.innerHeight/2 + yr * scale;
+
+  t.el.style.transform = `translate(-50%, -50%) translate3d(${screenX}px, ${screenY}px, 0) scale(${scale.toFixed(3)})`;
+  t.el.style.opacity = (zr > -perspective * 0.3) ? 1 : 0;
+}
+
+
+    for(const s of stars){
+      s.rotateAngle = (s.rotateAngle + s.rotateSpeed) % 360;
+      let x = s.x, y = s.y, z = s.z;
+
+      const rotRad = toRad(s.rotateAngle);
+      let sx = x;
+      let sy = y * Math.cos(rotRad) - z * Math.sin(rotRad);
+      let sz = y * Math.sin(rotRad) + z * Math.cos(rotRad);
+
+      let xr = sx * cosY - sz * sinY;
+      let zr = sx * sinY + sz * cosY;
+      let yr = sy * cosX - zr * sinX;
+      zr = sy * sinX + zr * cosX;
+
+      const scale = perspective / (perspective + zr);
+      const screenX = window.innerWidth/2 + xr * scale;
+      const screenY = window.innerHeight/2 + yr * scale;
+
+      s.el.style.transform = `translate(-50%, -50%) translate3d(${screenX}px, ${screenY}px, 0) scale(${scale.toFixed(3)})`;
+
+      s.el.style.opacity = (zr > -perspective * 0.3) ? 0.25 : 0;
+      s.el.style.width = s.size * scale + 'px';
+      s.el.style.height = s.size * scale + 'px';
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  window.addEventListener('resize', () => location.reload());
+</script>
+</body>
+</html>
