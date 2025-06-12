@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
@@ -10,7 +13,7 @@
       height: 100%;
       background: black;
       overflow: hidden;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: Pacifico;
       perspective: 1500px;
       touch-action: none;
     }
@@ -60,17 +63,15 @@
 <script>
   const world = document.getElementById('world');
   const words = [
-    "♡",
-    "☆", "✦",
-    "Anh nhớ em nhiều lắm", "Anh muốn nắm tay em suốt đời",
-    "Anh hạnh phúc vì có em trong đời", "Tình yêu này là mãi mãi",
-    "Anh yêu em, mãi mãi không đổi thay", "Anh nguyện làm mọi thứ vì em",
-    "Tình yêu của anh dành cho em là vô biên"
+    "♡", "☆", "✦",
+    "Phía sau ấy, luôn có tôi ở đó.", "Chờ xíu đi, cho tôi đi cùng bạn.", "Ăn gì xinh với giỏi thế? Bày tôi với.",
+    "Hmm, làm sao để tôi có được bạn nhỉ?", "Không biết là bạn có thích tôi không nhỉ? Tò mò quá đi.",
+    "Ở đó không có toi, không được khóc nhè đâu đấy nhé!", "Mở lòng ra rồi bỏ tôi vào đi!",
   ];
 
-  const COUNT_TEXT = 800;
+  const COUNT_TEXT = 600;
   const COUNT_STAR = 180;
-  const RADIUS = 1800;
+  const RADIUS = 1500;
 
   const texts = [], stars = [], hearts = [];
 
