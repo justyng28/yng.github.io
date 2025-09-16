@@ -41,14 +41,6 @@
         0 0 30px #c71585;
       will-change: transform, opacity;
     }
-        .star {
-      position: absolute;
-      background: cyan;
-      border-radius: 50%;
-      opacity: 0.2;
-      pointer-events: none;
-      will-change: transform, opacity;
-    }
     @media (max-width: 768px) {
       .text {
         font-size: 3vw !important;
@@ -205,7 +197,6 @@
 
   function animate() {
     texts.forEach(t => renderElement(t, 'text'));
-    stars.forEach(s => renderElement(s, 'star'));
     hearts.forEach(h => renderElement(h, 'heart'));
     requestAnimationFrame(animate);
   }
